@@ -55,8 +55,8 @@
         .dark-section .hoverable-card:hover { box-shadow: 0 25px 50px rgba(255, 255, 255, 0.08); }
 
         /* --- Barra Navigazione --- */
-        #main-nav { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; background-color: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); padding: 0 1rem; height: var(--nav-height); transition: transform 0.4s ease-out, background-color 0.3s ease; border-bottom: 1px solid rgba(0, 0, 0, 0.05); }
-        #main-nav.nav-scrolled { transform: translateY(0%); }
+        #main-nav { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; background-color: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); padding: 0 1rem; height: var(--nav-height); transition: transform 0.3s ease-in-out, background-color 0.3s ease; border-bottom: 1px solid rgba(0, 0, 0, 0.05); }
+        #main-nav.nav-up { transform: translateY(-100%); }
         #main-nav .nav-container { display: flex; justify-content: space-between; align-items: center; width: 100%; height: 100%; }
         #main-nav .logo { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--accent); transition: color 0.3s; }
         #main-nav .logo:hover { color: var(--primary-dark); }
@@ -785,12 +785,26 @@
             document.documentElement.style.setProperty('--nav-height', `${navHeight}px`);
             let lastScrollTop = 0;
 
-            const handleScroll = debounce(() => {
+            // Scroll handler per nascondere/mostrare la navbar
+            const handleScroll = () => {
                 const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                 if (mainNav) { if (scrollTop > lastScrollTop && scrollTop > navHeight * 1.5) { mainNav.classList.remove('nav-scrolled'); } else if (scrollTop < lastScrollTop || scrollTop <= navHeight) { if (scrollTop > navHeight * 0.5) { mainNav.classList.add('nav-scrolled'); } else { mainNav.classList.remove('nav-scrolled'); } } lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; }
-                 if (scrollProgressBar) { const scrollPercent = (document.documentElement.scrollHeight - window.innerHeight) > 0 ? (scrollTop / (document.documentElement.scrollHeight - window.innerHeight)) * 100 : 0; scrollProgressBar.style.width = `${scrollPercent}%`; }
-            }, 10);
-            window.addEventListener('scroll', handleScroll, { passive: true }); handleScroll();
+                if (scrollTop > lastScrollTop && scrollTop > navHeight) {
+                    // Scroll down
+                    mainNav.classList.add('nav-up');
+                } else {
+                    // Scroll up
+                    mainNav.classList.remove('nav-up');
+                }
+                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+
+                // Barra di progresso
+                if (scrollProgressBar) { 
+                    const scrollPercent = (document.documentElement.scrollHeight - window.innerHeight) > 0 ? (scrollTop / (document.documentElement.scrollHeight - window.innerHeight)) * 100 : 0; 
+                    scrollProgressBar.style.width = `${scrollPercent}%`; 
+                }
+            };
+            window.addEventListener('scroll', handleScroll, { passive: true });
+
 
             const animatedElements = document.querySelectorAll('.animate-on-scroll');
             const observerOptions = { threshold: 0.1 };
