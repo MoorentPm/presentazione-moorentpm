@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoorentPm - Property Management Premium Dinamico (v4.3)</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+
+    <style>
+        /* --- Palette Colori --- */
+        :root {
+            --primary: #f3dfd9;      /* Rosa pallido */
+            --primary-dark: #e4c8c0; /* Rosa più scuro */
+            --secondary: #aca5a5;    /* Grigio elegante */
+            --secondary-dark: #938d8d;/* Grigio più scuro */
+            --accent: #232323;       /* Nero/Grigio scurissimo */
+            --accent-light: #464646; /* Grigio scuro */
+            --success: #10b981;      /* Verde */
+            --warning: #f59e0b;      /* Giallo/Ambra */
+            --danger: #ef4444;       /* Rosso */
+            --dark: #232323;         /* Alias per accent */
+            --light: #f8fafc;       /* Grigio chiarissimo */
+            --white: #ffffff;
+            --nav-height: 65px;
+        }
+
+        /* --- Impostazioni Base --- */
+        html { scroll-behavior: smooth; scroll-padding-top: var(--nav-height); }
+        body { font-family: 'Poppins', sans-serif; color: var(--dark); background-color: var(--white); overflow-x: hidden; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Montserrat', sans-serif; font-weight: 700; color: var(--accent); letter-spacing: -0.02em; }
+        section { padding: 4rem 1rem; overflow: hidden; position: relative; }
+        @media (min-width: 768px) { section { padding: 6rem 2rem; } }
+        @media (min-width: 1024px) { section { padding: 8rem 2rem; } }
+        .container-lg { max-width: 1200px; margin-left: auto; margin-right: auto; padding-left: 1rem; padding-right: 1rem; }
+
+        /* --- Tema Scuro --- */
+        .dark-section { background-color: var(--accent); color: var(--light); }
+        .dark-section h1, .dark-section h2, .dark-section h3, .dark-section h4 { color: var(--white); }
+        .dark-section .section-subtitle, .dark-section p, .dark-section li { color: var(--gray); }
+        .dark-section .custom-card { background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--light); }
+        .dark-section .custom-card h3, .dark-section .custom-card h4 { color: var(--white); }
+        .dark-section .custom-card p, .dark-section .custom-card li { color: var(--gray); }
+        .dark-section .styled-list li i { color: var(--primary); background-color: rgba(243, 223, 217, 0.1); }
+        .dark-section .text-primary { color: var(--primary) !important; }
+        .dark-section .text-accent { color: var(--white) !important; }
+        .dark-section .hoverable-card:hover { box-shadow: 0 25px 50px rgba(255, 255, 255, 0.08); }
+
+        /* --- Barra Navigazione --- */
+        #main-nav { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; background-color: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); padding: 0.75rem 0; height: var(--nav-height); transform: translateY(-100%); transition: transform 0.4s ease-out, background-color 0.3s ease; border-bottom: 1px solid rgba(0, 0, 0, 0.05); }
+        #main-nav.nav-scrolled { transform: translateY(0%); }
+        #main-nav .nav-container { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        #main-nav nav { display: flex; justify-content: center; align-items: center; flex-grow: 1; }
+        #main-nav nav a { color: var(--accent-light); font-weight: 500; padding: 0.5rem 0.8rem; margin: 0 0.15rem; border-radius: 999px; transition: color 0.3s ease, background-color 0.3s ease; position: relative; overflow: hidden; font-size: 0.85rem; text-align: center; white-space: nowrap; }
+        #main-nav nav a:hover { color: var(--dark); background-color: rgba(0, 0, 0, 0.05); }
+        #main-nav nav a.active { color: var(--dark); font-weight: 600; background-color: var(--primary); }
+        #main-nav .logo-container { flex-shrink: 0; padding-left: 1rem; }
+        #main-nav .nav-links-container { flex-grow: 1; display: flex; justify-content: center; }
+        #main-nav .logo { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--accent); transition: color 0.3s; }
+        #main-nav .logo:hover { color: var(--primary-dark); }
+        #main-nav .contact-button-nav { flex-shrink: 0; padding-right: 1rem; }
+
+        /* --- Barra Progresso --- */
+        #scroll-progress-bar { position: fixed; top: 0; left: 0; height: 4px; background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%); width: 0%; z-index: 1001; transition: width 0.05s linear; }
+
+        /* --- Elementi Comuni & Tipografia Mobile --- */
+        .section-title { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; text-align: center; line-height: 1.2; }
+        .section-subtitle { font-size: 1rem; color: var(--secondary-dark); text-align: center; max-width: 750px; margin: 0 auto 3rem auto; font-weight: 400; line-height: 1.7; }
+        @media (min-width: 768px) { .section-title { font-size: 3.2rem; margin-bottom: 1.5rem;} .section-subtitle { font-size: 1.3rem; margin-bottom: 4rem;} }
+        .dark-section .section-subtitle { color: var(--gray); }
+        
+        .hoverable-card { transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .hoverable-card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1); }
+        .dark-section .hoverable-card:hover { box-shadow: 0 25px 50px rgba(255, 255, 255, 0.08); }
+
+        .custom-card { background-color: var(--white); border-radius: 1.25rem; padding: 2rem; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05); border: 1px solid rgba(0, 0, 0, 0.07); display: flex; flex-direction: column; }
+
+        .styled-list li { position: relative; padding-left: 2.2rem; margin-bottom: 1.25rem; font-size: 1.05rem; line-height: 1.6; }
+        .styled-list li i { position: absolute; left: 0; top: 6px; color: var(--primary); font-size: 1.1rem; background-color: rgba(243, 223, 217, 0.15); width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; }
+        .dark-section .styled-list li i { background-color: rgba(243, 223, 217, 0.1); }
+
+        .btn { display: inline-block; padding: 0.9rem 2.2rem; border-radius: 999px; font-weight: 600; text-align: center; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer; border: none; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); position: relative; overflow: hidden; font-size: 1rem; }
+        .btn:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.18); }
+        .btn-primary { background: var(--primary); color: var(--dark); }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-accent { background: var(--accent); color: var(--white); }
+        .btn-accent:hover { background: var(--accent-light); }
+        .btn-secondary { background: var(--secondary); color: var(--white); }
+        .btn-secondary:hover { background: var(--secondary-dark); }
+        .btn i { margin-right: 0.6rem; }
+
+        /* --- Animazioni --- */
+        .animate-on-scroll { opacity: 0; transition: opacity 0.9s cubic-bezier(0.165, 0.84, 0.44, 1), transform 0.9s cubic-bezier(0.165, 0.84, 0.44, 1); }
+        .fade-in-up { transform: translateY(50px); }
+        .fade-in-left { transform: translateX(-50px); }
+        .fade-in-right { transform: translateX(50px); }
+        .scale-in { transform: scale(0.9); }
+        .is-visible { opacity: 1; transform: none; }
+        .delay-100 { transition-delay: 0.1s !important; } .delay-200 { transition-delay: 0.2s !important; } .delay-300 { transition-delay: 0.3s !important; } .delay-400 { transition-delay: 0.4s !important; } .delay-500 { transition-delay: 0.5s !important; } .delay-600 { transition-delay: 0.6s !important; } .delay-700 { transition-delay: 0.7s !important; }
+
+        /* --- Stili Specifici Sezioni --- */
+        /* Hero */
+        #hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding-top: var(--nav-height); background: var(--accent); color: var(--white); position: relative; }
+        #hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 1.5rem; color: var(--white); line-height: 1.3; }
+        #hero .subtitle { font-size: 1.1rem; font-weight: 400; color: var(--primary); margin-bottom: 3rem; max-width: 650px; margin-left: auto; margin-right: auto; line-height: 1.8; }
+        @media (min-width: 768px) { #hero h1 { font-size: 4rem; } #hero .subtitle { font-size: 1.5rem; } }
+        #hero .scroll-down-indicator { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); opacity: 0; animation: fadeIn 1s 1.8s forwards, bounce 2.5s infinite 2.8s; color: var(--primary); font-size: 1.8rem; }
+
+        /* Problema */
+        #problema { background-color: var(--white); }
+        #problema .problem-card { text-align: center; padding: 2rem; border-radius: 1rem; background-color: #fff7f7; border: 1px solid var(--danger); }
+        #problema .problem-icon { font-size: 2.5rem; color: var(--danger); margin-bottom: 1rem; display: inline-block; }
+        #problema h3 { color: var(--danger); font-size: 1.25rem; margin-bottom: 0.5rem;}
+        #problema p { color: var(--accent-light); font-size: 0.95rem;}
+
+        /* Valori e Pilastri */
+        #valori-pilastri { background-color: var(--accent); }
+        #valori-pilastri .vp-card { text-align: center; height: 100%; background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 2rem; border-radius: 1rem; }
+        #valori-pilastri .vp-icon { font-size: 2.5rem; color: var(--primary); margin-bottom: 1.5rem; display: inline-block; }
+        #valori-pilastri .vp-title { font-size: 1.2rem; font-weight: 600; color: var(--white); margin-bottom: 0.75rem; }
+        #valori-pilastri .vp-description { font-size: 0.9rem; color: var(--gray); line-height: 1.6; }
+
+        /* Come Funziona (Servizi) */
+        #come-funziona { background-color: var(--white); }
+        .service-tabs button { padding: 0.75rem 1.5rem; border-radius: 999px; font-weight: 600; transition: all 0.3s ease; border: 2px solid var(--primary); color: var(--primary-dark); background-color: transparent; }
+        .service-tabs button:hover { background-color: rgba(243, 223, 217, 0.1); color: var(--dark); }
+        .service-tabs button.active { background-color: var(--primary); color: var(--dark); border-color: var(--primary); }
+        .service-content { display: none; animation: fadeIn 0.6s ease; }
+        .service-content.active { display: block; }
+        .service-content h3 { margin-bottom: 0.5rem; font-size: 1.8rem; font-weight: 700; }
+        .service-content .service-subtitle { text-align: center; font-size: 1rem; font-weight: 500; color: var(--accent); margin-bottom: 2rem; }
+        .service-content .service-point { background-color: #f9fafb; padding: 1.25rem; border-radius: 0.75rem; border: 1px solid #e5e7eb; margin-bottom: 1rem; }
+        .service-content .service-point h4 { color: var(--accent); font-size: 1.1rem; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.5rem; font-weight: 600; }
+        .service-content .service-point h4 i { color: var(--primary); }
+        .service-content .service-point p { font-size: 0.95rem; color: var(--secondary-dark); line-height: 1.6; }
+
+        /* Perché Sceglierci */
+        #perche-noi { background-color: var(--accent); }
+        .differentiator-item { display: flex; align-items: flex-start; gap: 1.5rem; margin-bottom: 2.5rem; }
+        .differentiator-icon { flex-shrink: 0; font-size: 1.8rem; color: var(--primary); margin-top: 5px; width: 40px; text-align: center; }
+        .differentiator-title { font-weight: 600; font-size: 1.2rem; color: var(--white); margin-bottom: 0.5rem; }
+        .differentiator-text { font-size: 1rem; color: var(--gray); line-height: 1.7; }
+
+        /* Risultati e Fiducia */
+        #risultati { background-color: var(--light); }
+        .satisfaction-score { font-size: 4rem; font-weight: 800; color: var(--primary); line-height: 1; }
+        .kpi-card { text-align: center; }
+        .kpi-card p:last-child { font-size: 0.9rem; color: var(--secondary-dark); }
+        .feedback-box { background-color: var(--white); padding: 2rem; border-radius: 1rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 1px solid #eee;}
+        .feedback-box h4 { color: var(--accent); margin-bottom: 1rem; }
+        .feedback-box ul li { list-style: disc; margin-left: 1.5rem; margin-bottom: 0.5rem; color: var(--secondary-dark); font-size: 0.95rem;}
+        #caseStudyChartContainer { height: 350px; margin-top: 1.5rem; }
+
+        /* L'Immobile Ideale */
+        #immobile-ideale { background-color: var(--white); }
+        #immobile-ideale .ideal-property-card { border-left: 4px solid var(--primary); padding: 2rem; background-color: #f9fafb; border-radius: 0 0.75rem 0.75rem 0;}
+        #immobile-ideale .ideal-property-card h3 { color: var(--accent); font-size: 1.7rem; margin-bottom: 1.5rem;}
+        #immobile-ideale .ideal-property-list li { margin-bottom: 0.8rem; padding-left: 1.8rem; font-size: 1rem; color: var(--secondary-dark); position: relative; }
+        #immobile-ideale .ideal-property-list li::before { content: "✓"; position: absolute; left: 0; color: var(--success); font-weight: 900; font-size: 1.1rem; top: 2px;}
+        #immobile-ideale .ideal-property-list strong { font-weight: 600; color: var(--dark); }
+
+
+        /* Offerta e Fiscalità */
+        #offerta { background-color: var(--gray-50); }
+        .offer-card { border-left-width: 5px; padding: 2.5rem; border-radius: 0 1rem 1rem 0; background-color: var(--white); display: flex; flex-direction: column; } /* Rimosso height:100% */
+        .offer-card h3 { margin-bottom: 0.25rem; font-size: 1.5rem; font-weight: 700; }
+        .offer-card .offer-subtitle { font-size: 1rem; color: var(--secondary-dark); margin-bottom: 1rem; font-weight: 500; }
+        .offer-card .price { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.25rem; color: var(--accent);}
+        @media (min-width: 768px) { .offer-card .price { font-size: 2.8rem; } }
+        .offer-card .price-note { font-size: 0.85rem; color: var(--secondary-dark); margin-bottom: 1.5rem;}
+        .offer-card-standard { border-color: var(--primary); }
+        .offer-card .includes-title { font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--accent); font-size: 1.05rem;}
+        .offer-card ul { list-style: none; padding: 0; margin-bottom: 1.5rem; }
+        .offer-card ul li { position: relative; padding-left: 1.8rem; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--secondary-dark);}
+        .offer-card ul li::before { content: "✓"; position: absolute; left: 0; font-weight: 900; }
+        .offer-card-standard ul li::before { color: var(--primary); }
+        .offer-card .taxation-info { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;} /* Divisore per tassazione */
+
+
+        /* Contatti */
+        #contatti { background-color: var(--accent); color: var(--light); }
+        #contatti .section-title, #contatti .section-subtitle { color: var(--white); }
+        #contatti .footer-text { margin-top: 4rem; color: var(--gray); font-size: 0.9rem;}
+
+        /* Stili Menu Mobile */
+        body.mobile-menu-open {
+            overflow: hidden;
+        }
+
+        /* --- Keyframes --- */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes bounce { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, -12px); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        /* --- Reduced Motion --- */
+        @media (prefers-reduced-motion: reduce) {
+          html { scroll-behavior: auto; }
+          *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; transition-delay: 0ms !important; animation-delay: 0ms !important; }
+          .animate-on-scroll, #hero h1, #hero .subtitle, #hero .cta-button, #hero .scroll-down-indicator { opacity: 1; transform: none; animation: none; }
+          #main-nav { transform: translateY(0%); }
+          .accordion-content { transition: none; }
+          .accordion-item.open .accordion-content { max-height: none; }
+          #feature-details-box { transition: none; }
+          #feature-details-box.visible { max-height: none; }
+          .hoverable-card:hover { transform: none; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05); }
+          .dark-section .hoverable-card:hover { box-shadow: 0 8px 25px rgba(255, 255, 255, 0.05); }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div id="scroll-progress-bar"></div>
+
+    <header id="main-nav" class="w-full">
+        <div class="container-lg nav-container">
+            <div class="logo-container">
+                <a href="#hero" class="logo">MoorentPm</a>
+            </div>
+            <div class="nav-links-container">
+                <nav class="hidden md:flex">
+                    <a href="#problema" class="nav-link">Il Problema</a>
+                    <a href="#valori-pilastri" class="nav-link">Valori</a>
+                    <a href="#come-funziona" class="nav-link">Servizi</a>
+                    <a href="#perche-noi" class="nav-link">Perché Noi</a>
+                    <a href="#risultati" class="nav-link">Risultati</a>
+                    <a href="#immobile-ideale" class="nav-link">Immobile Ideale</a>
+                    <a href="#offerta" class="nav-link">Offerta</a>
+                    <a href="#contatti" class="nav-link">Contatti</a>
+                </nav>
+            </div>
+             <div class="contact-button-nav">
+                <a href="#contatti" class="hidden lg:inline-block btn btn-primary btn-sm py-2 px-4">Contattaci</a>
+             </div>
+             <button id="mobile-menu-button" class="md:hidden text-2xl text-accent focus:outline-none" aria-label="Apri menu">
+                 <i class="fas fa-bars"></i>
+             </button>
+        </div>
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu" class="fixed inset-0 bg-accent z-50 transform translate-x-full transition-transform duration-300 ease-in-out md:hidden">
+            <div class="flex justify-end p-6">
+                <button id="close-mobile-menu" class="text-3xl text-white" aria-label="Chiudi menu">
+                    &times;
+                </button>
+            </div>
+            <nav class="flex flex-col items-center justify-center h-full -mt-16 space-y-8">
+                <a href="#problema" class="nav-link-mobile text-2xl text-white font-medium">Il Problema</a>
+                <a href="#valori-pilastri" class="nav-link-mobile text-2xl text-white font-medium">Valori</a>
+                <a href="#come-funziona" class="nav-link-mobile text-2xl text-white font-medium">Servizi</a>
+                <a href="#perche-noi" class="nav-link-mobile text-2xl text-white font-medium">Perché Noi</a>
+                <a href="#risultati" class="nav-link-mobile text-2xl text-white font-medium">Risultati</a>
+                <a href="#immobile-ideale" class="nav-link-mobile text-2xl text-white font-medium">Immobile Ideale</a>
+                <a href="#offerta" class="nav-link-mobile text-2xl text-white font-medium">Offerta</a>
+                <a href="#contatti" class="nav-link-mobile text-2xl text-white font-medium">Contatti</a>
+            </nav>
+        </div>
+    </header>
+
+    <section id="hero" class="relative">
+        <div class="container-lg z-10">
+            <h1 class="animate-on-scroll fade-in-up">Valorizza il tuo immobile:</h1>
+            <p class="subtitle animate-on-scroll fade-in-up delay-200">guadagna in modo semplice, al difficile ci pensiamo noi.</p>
+            <a href="#problema" class="cta-button btn btn-primary text-lg animate-on-scroll fade-in-up delay-400">Scopri Come</a>
+        </div>
+        <a href="#problema" class="scroll-down-indicator" aria-label="Scorri verso il basso">
+            <i class="fas fa-chevron-down"></i>
+        </a>
+    </section>
+
+    <section id="problema" class="bg-white">
+        <div class="container-lg text-center">
+            <h2 class="section-title animate-on-scroll fade-in-up">Gestire un Immobile: <span class="text-primary">Sfide Comuni</span></h2>
+            <p class="section-subtitle animate-on-scroll fade-in-up delay-100">
+                Molti proprietari affrontano rendimenti incerti, stress gestionale e complessità normative. Noi trasformiamo queste sfide in serenità e profitto.
+            </p>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="problem-card hoverable-card animate-on-scroll fade-in-up delay-200">
+                    <span class="problem-icon"><i class="fas fa-dollar-sign"></i></span>
+                    <h3 class="font-semibold text-xl mb-2">Rendimenti Incerti</h3>
+                    <p>Paura della morosità, difficoltà nel definire il prezzo giusto, periodi di sfitto e guadagni inferiori al potenziale.</p>
+                </div>
+                <div class="problem-card hoverable-card animate-on-scroll fade-in-up delay-300">
+                     <span class="problem-icon"><i class="fas fa-clock"></i></span>
+                    <h3 class="font-semibold text-xl mb-2">Tempo e Stress</h3>
+                    <p>La gestione di ospiti, pulizie, manutenzioni, emergenze e la burocrazia richiedono un impegno costante e gravoso.</p>
+                </div>
+                <div class="problem-card hoverable-card animate-on-scroll fade-in-up delay-400">
+                     <span class="problem-icon"><i class="fas fa-file-alt"></i></span>
+                    <h3 class="font-semibold text-xl mb-2">Complessità Normative</h3>
+                    <p>Districarsi tra adempimenti fiscali, leggi regionali, comunicazioni obbligatorie e normative in continua evoluzione.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="valori-pilastri" class="dark-section">
+        <div class="container-lg">
+            <h2 class="section-title animate-on-scroll fade-in-up">I Nostri <span class="text-primary">Valori e Pilastri</span></h2>
+            <p class="section-subtitle animate-on-scroll fade-in-up delay-100">
+                Guidano ogni nostra azione, definendo il nostro impegno verso di te e il tuo immobile. Trasparenza, fiducia e rispetto sono alla base di tutto.
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="vp-card hoverable-card animate-on-scroll fade-in-up delay-200">
+                    <span class="vp-icon"><i class="fas fa-gem"></i></span>
+                    <h3 class="vp-title">Qualità Selezionata</h3>
+                    <p class="vp-description">Non quantità, ma eccellenza. Selezioniamo immobili con potenziale premium per garantire attenzione meticolosa e risultati superiori.</p>
+                </div>
+                <div class="vp-card hoverable-card animate-on-scroll fade-in-up delay-300">
+                     <span class="vp-icon"><i class="fas fa-user-shield"></i></span>
+                    <h3 class="vp-title">Sicurezza Totale</h3>
+                    <p class="vp-description">Anticipiamo i problemi. Dalla gestione fiscale e burocratica proattiva ai pagamenti garantiti, la tua tranquillità è la nostra priorità.</p>
+                </div>
+                 <div class="vp-card hoverable-card animate-on-scroll fade-in-up delay-400">
+                     <span class="vp-icon"><i class="fas fa-eye"></i></span>
+                    <h3 class="vp-title">Trasparenza Reale</h3>
+                    <p class="vp-description">Condividiamo tutto: dati, processi, decisioni. Costruiamo fiducia attraverso una comunicazione aperta e onesta.</p>
+                </div>
+                 <div class="vp-card hoverable-card animate-on-scroll fade-in-up delay-500">
+                     <span class="vp-icon"><i class="fas fa-cogs"></i></span>
+                    <h3 class="vp-title">Soluzioni su Misura</h3>
+                    <p class="vp-description">Ogni immobile è unico. Creiamo strategie personalizzate, integrando innovazione responsabile per esaltarne il valore.</p>
+                </div>
+                <div class="vp-card hoverable-card animate-on-scroll fade-in-up delay-600">
+                    <span class="vp-icon"><i class="fas fa-chart-area"></i></span>
+                    <h3 class="vp-title">Valorizzazione Continua</h3>
+                    <p class="vp-description">Non ci fermiamo alla gestione. Investiamo tempo e risorse per migliorare costantemente il tuo immobile e il suo rendimento.</p>
+                </div>
+                <div class="vp-card hoverable-card animate-on-scroll fade-in-up delay-700">
+                    <span class="vp-icon"><i class="fas fa-star"></i></span>
+                    <h3 class="vp-title">Ospitalità d'Eccellenza</h3>
+                    <p class="vp-description">Creiamo esperienze memorabili per gli ospiti, garantendo recensioni positive e un tasso di ritorno più elevato.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="come-funziona" class="bg-white">
+        <div class="container-lg">
+             <h2 class="section-title animate-on-scroll fade-in-up">Come Trasformiamo il Tuo <span class="text-primary">Immobile</span></h2>
+            <p class="section-subtitle animate-on-scroll fade-in-up delay-100">
+                Scegli il modello di gestione più adatto a te, sempre con la garanzia di qualità, trasparenza e risultati MoorentPm.
+            </p>
+
+            <div class="flex flex-wrap justify-center gap-2 md:gap-4 mb-10 animate-on-scroll fade-in-up delay-200 service-tabs">
+                <button class="service-tab-button active" data-target="gestione-premium">Gestione Premium</button>
+                <button class="service-tab-button" data-target="subaffitto">Subaffitto Strategico</button>
+                <button class="service-tab-button" data-target="gestione-online">Gestione Online</button>
+            </div>
+
+            <div class="service-content-container max-w-4xl mx-auto">
+                <div id="gestione-premium" class="service-content active">
+                    <h3 class="text-2xl font-bold mb-2 text-center">Gestione Premium</h3>
+                    <p class="service-subtitle">Commissione 27,5% (al netto commissioni OTA)</p>
+                    <p class="text-center text-gray-700 mb-8">La soluzione completa "zero pensieri" per massimizzare i rendimenti variabili. Delega tutto a noi.</p>
+                    <div class="grid md:grid-cols-2 gap-6 text-sm">
+                        <div class="service-point hoverable-card">
+                            <h4 class="font-semibold"><i class="fas fa-rocket"></i>Attivazione All-Inclusive</h4>
+                            <p>Pacchetto iniziale come investimento condiviso (valore totale €840+), completo di home staging, assicurazione, kit benvenuto, consulenza fiscale e molto altro.</p>
+                        </div>
+                        <div class="service-point hoverable-card">
+                             <h4 class="font-semibold"><i class="fas fa-headset"></i>Gestione Operativa 24/7</h4>
+                            <p>Comunicazione ospiti, check-in/out, pulizie e biancheria professionali, manutenzioni, gestione emergenze.</p>
+                        </div>
+                         <div class="service-point hoverable-card">
+                             <h4 class="font-semibold"><i class="fas fa-chart-bar"></i>Ottimizzazione Ricavi</h4>
+                            <p>Dynamic pricing, gestione OTA, strategie tariffarie avanzate, reportistica dettagliata.</p>
+                        </div>
+                         <div class="service-point hoverable-card">
+                             <h4 class="font-semibold"><i class="fas fa-file-invoice-dollar"></i>Gestione Burocratica e Fiscale</h4>
+                            <p>Adempimenti normativi completi, opzione Sostituto d'Imposta disponibile.</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="subaffitto" class="service-content">
+                    <h3 class="text-2xl font-bold mb-2 text-center">Subaffitto Strategico</h3>
+                    <p class="service-subtitle">Canone Fisso Garantito</p>
+                     <p class="text-center text-gray-700 mb-8">Garantisci una rendita mensile fissa e sicura, superiore all'affitto tradizionale, e dimentica ogni preoccupazione. Ideale per massima tranquillità.</p>
+                     <div class="grid md:grid-cols-2 gap-6 text-sm">
+                        <div class="service-point hoverable-card">
+                            <h4 class="font-semibold"><i class="fas fa-money-bill-wave"></i>Canone Fisso Garantito</h4>
+                            <p>Ricevi un affitto mensile sicuro e puntuale, spesso superiore a quello tradizionale, con 3 mensilità anticipate.</p>
+                        </div>
+                        <div class="service-point hoverable-card">
+                             <h4 class="font-semibold"><i class="fas fa-hammer"></i>Valorizzazione Inclusa</h4>
+                             <p>Ci occupiamo sempre delle migliorie e attuiamo sempre un progetto di home staging per valorizzare l'immobile e renderlo la sua versione migliore.</p>
+                        </div>
+                         <div class="service-point hoverable-card">
+                             <h4 class="font-semibold"><i class="fas fa-shield-alt"></i>Zero Rischi e Costi Nascosti</h4>
+                            <p>Nessun rischio di morosità o spese impreviste. Gestione completa e manutenzione ordinaria a carico nostro.</p>
+                        </div>
+                         <div class="service-point hoverable-card">
+                             <h4 class="font-semibold"><i class="fas fa-home"></i>Immobile Protetto e Curato</h4>
+                            <p>Applichiamo i nostri standard premium di gestione e manutenzione come se l'immobile fosse nostro.</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="gestione-online" class="service-content">
+                     <h3 class="text-2xl font-bold mb-2 text-center">Gestione Online</h3>
+                     <p class="service-subtitle">Commissione 18% (al netto commissioni OTA)</p>
+                     <p class="text-center text-gray-700 mb-8">Hai già personale di fiducia in loco? Ottimizziamo la tua presenza online, gestiamo prenotazioni e comunicazione, collaborando attivamente con il tuo team.</p>
+                     <div class="grid md:grid-cols-2 gap-6 text-sm">
+                        <div class="service-point hoverable-card">
+                            <h4 class="font-semibold"><i class="fas fa-bullhorn"></i>Visibilità e Prenotazioni</h4>
+                            <p>Ottimizzazione annunci su OTA, gestione calendario, conferma prenotazioni, attivazione Instant Book.</p>
+                        </div>
+                        <div class="service-point hoverable-card">
+                             <h4 class="font-semibold"><i class="fas fa-tags"></i>Dynamic Pricing Remoto</h4>
+                             <p>Strategie tariffarie avanzate e aggiustamenti continui per massimizzare i ricavi.</p>
+                        </div>
+                         <div class="service-point hoverable-card">
+                             <h4 class="font-semibold"><i class="fas fa-users-cog"></i>Comunicazione e Collaborazione</h4>
+                            <p>Gestione richieste pre-soggiorno, invio istruzioni, comunicazione e coordinamento costante con il tuo team operativo locale.</p>
+                        </div>
+                         <div class="service-point hoverable-card">
+                             <h4 class="font-semibold"><i class="fas fa-chart-pie"></i>Report e Analisi</h4>
+                            <p>Reportistica dettagliata sulle performance online, analisi competitor e suggerimenti strategici.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p class="text-center text-xs text-gray-500 mt-8 animate-on-scroll fade-in-up delay-300">Valutiamo insieme la soluzione migliore per te con un'analisi gratuita e senza impegno.</p>
+        </div>
+    </section>
+
+    <section id="perche-noi" class="dark-section">
+        <div class="container-lg">
+            <h2 class="section-title animate-on-scroll fade-in-up">Perché MoorentPm è la <span class="text-primary">Scelta Strategica</span></h2>
+            <p class="section-subtitle animate-on-scroll fade-in-up delay-100">
+                Non siamo solo un property manager. Siamo il tuo partner strategico per la crescita e la sicurezza del tuo investimento immobiliare.
+            </p>
+            <div class="grid md:grid-cols-2 gap-x-12 gap-y-10">
+                <div class="differentiator-item animate-on-scroll fade-in-left delay-200">
+                    <i class="differentiator-icon fas fa-gem"></i>
+                    <div>
+                        <h4 class="differentiator-title">Approccio Boutique Premium</h4>
+                        <p class="differentiator-text">Qualità > Quantità. La nostra dimensione strategica ci permette attenzione personalizzata e standard superiori.</p>
+                    </div>
+                </div>
+                 <div class="differentiator-item animate-on-scroll fade-in-right delay-250">
+                    <i class="differentiator-icon fas fa-balance-scale-right"></i>
+                    <div>
+                        <h4 class="differentiator-title">Competenza Fiscale Integrata</h4>
+                        <p class="differentiator-text">Consulenza specializzata per trasformare la complessità fiscale in un vantaggio.</p>
+                    </div>
+                </div>
+                 <div class="differentiator-item animate-on-scroll fade-in-left delay-300">
+                    <i class="differentiator-icon fas fa-handshake"></i>
+                    <div>
+                        <h4 class="differentiator-title">Trasparenza Radicale</h4>
+                        <p class="differentiator-text">Pacchetto attivazione chiaro, report dettagliati, accesso completo ai dati. Costruiamo fiducia fin dal primo giorno.</p>
+                    </div>
+                </div>
+                 <div class="differentiator-item animate-on-scroll fade-in-right delay-350">
+                    <i class="differentiator-icon fas fa-chart-line"></i>
+                    <div>
+                        <h4 class="differentiator-title">Valorizzazione Attiva</h4>
+                        <p class="differentiator-text">Incrementiamo attivamente il valore del tuo immobile nel tempo con microinvestimenti strategici e upgrade mirati.</p>
+                    </div>
+                </div>
+                 <div class="differentiator-item animate-on-scroll fade-in-left delay-400">
+                    <i class="differentiator-icon fas fa-filter"></i>
+                    <div>
+                        <h4 class="differentiator-title">Selezione Strategica</h4>
+                        <p class="differentiator-text">Valutiamo attentamente il potenziale. La nostra selettività garantisce un portfolio di qualità e performance elevate.</p>
+                    </div>
+                </div>
+                <div class="differentiator-item animate-on-scroll fade-in-right delay-450">
+                    <i class="differentiator-icon fas fa-user-cog"></i>
+                    <div>
+                        <h4 class="differentiator-title">Flessibilità Strutturata</h4>
+                        <p class="differentiator-text">Offriamo modelli diversi adattandoli alle tue esigenze, mantenendo sempre processi solidi e standard qualitativi elevati.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="risultati">
+        <div class="container-lg">
+             <h2 class="section-title animate-on-scroll fade-in-up">Risultati Concreti, <span class="text-primary">Fiducia Costruita</span></h2>
+            <p class="section-subtitle animate-on-scroll fade-in-up delay-100">
+                La fiducia dei nostri clienti si basa su performance misurabili, un servizio che supera le aspettative e un'ospitalità di alto livello per ogni ospite. Oltre alla gestione, offriamo un servizio di hosting impeccabile.
+            </p>
+            <div class="grid md:grid-cols-2 gap-8 lg:gap-12 items-start">
+                <div class="animate-on-scroll fade-in-left delay-200">
+                    <h3 class="text-2xl font-semibold mb-6 text-center md:text-left">I Nostri Standard di Eccellenza</h3>
+                    <div class="grid grid-cols-2 gap-6 text-center mb-8">
+                         <div class="kpi-card hoverable-card">
+                            <p class="satisfaction-score">4.8+</p>
+                            <p>Rating Medio Ospiti (Airbnb)</p>
+                        </div>
+                         <div class="kpi-card hoverable-card">
+                            <p class="satisfaction-score">8.7+</p>
+                            <p>Punteggio Medio Ospiti (Booking.com)</p>
+                        </div>
+                    </div>
+                     <div class="feedback-box hoverable-card">
+                        <h4 class="font-semibold text-lg"><i class="fas fa-comments mr-2 text-primary"></i> Cosa Apprezzano di Più i Proprietari:</h4>
+                        <ul class="mt-3">
+                            <li>Gestione proattiva e risolutiva dei problemi.</li>
+                            <li>Ottimizzazione costante dei ricavi e delle tariffe.</li>
+                            <li>Comunicazione chiara, trasparente e sempre puntuale.</li>
+                            <li>Competenza e supporto per aspetti fiscali e burocratici.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="animate-on-scroll fade-in-right delay-300">
+                     <h3 class="text-2xl font-semibold mb-6 text-center md:text-left">Caso di Studio Reale</h3>
+                    <div class="custom-card hoverable-card bg-primary/10 border border-primary/30">
+                        <h4 class="text-xl font-semibold mb-2 text-center">Focus: <span class="text-primary">Appartamento a Padova (Via Trieste)</span></h4>
+                        <p class="text-center text-gray-600 text-sm mb-4">Stima potenziale di rendimento basata sulla stagionalità.</p>
+                        <div id="caseStudyChartContainer">
+                             <canvas id="financialChartPadova"></canvas>
+                        </div>
+                        <p class="text-center text-xs text-gray-500 mt-2">Costi principali considerati: commissioni OTA, tasse e spese della casa.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="immobile-ideale" class="bg-gray-50">
+        <div class="container-lg">
+            <h2 class="section-title animate-on-scroll fade-in-up">L'Immobile Perfetto per <span class="text-primary">Prosperare</span></h2>
+            <p class="section-subtitle animate-on-scroll fade-in-up delay-100">
+                Selezioniamo proprietà con caratteristiche specifiche per garantire il successo nel mercato degli affitti brevi e massimizzare il ritorno sull'investimento.
+            </p>
+            <div class="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
+                 <div class="animate-on-scroll fade-in-left delay-200">
+                      <div class="w-full h-full bg-gray-200 border-2 border-dashed border-gray-400 rounded-xl flex items-center justify-center min-h-[300px]">
+                          <p class="text-gray-500">Spazio per l'immagine</p>
+                      </div>
+                 </div>
+                 <div class="ideal-property-card hoverable-card animate-on-scroll fade-in-right delay-300">
+                    <h3 class="font-semibold">Caratteristiche Chiave Ricercate:</h3>
+                    <ul class="ideal-property-list mt-4">
+                        <li><strong class="font-semibold text-dark">Location Strategica:</strong> Vicinanza a trasporti, servizi essenziali (bar, farmacie, supermercati), punti di interesse (turistici, artistici, sportivi), preferibilmente in centro città o zone ad alta attrattività.</li>
+                        <li><strong class="font-semibold text-dark">Potenziale di Valorizzazione:</strong> Spazi ben distribuiti, buona luminosità naturale, possibilità di upgrade estetici o funzionali per raggiungere standard elevati.</li>
+                        <li><strong class="font-semibold text-dark">Standard Qualitativi:</strong> Buono stato generale di impianti e infissi, o potenziale per un adeguamento efficace.</li>
+                        <li><strong class="font-semibold text-dark">Attrattiva per il Target:</strong> Adatto per affitti brevi (turisti, business traveler) con comfort moderni e design accattivante.</li>
+                        <li><strong class="font-semibold text-dark">Servizi Aggiuntivi:</strong> Parcheggio, spazio esterno (balcone, terrazzo), ascensore, aria condizionata, Wi-Fi performante.</li>
+                        <li><strong class="font-semibold text-dark">Conformità e Sicurezza:</strong> Documentazione in regola, impianti certificati e sicurezza generale dell'edificio.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="rendimento-stimato" class="bg-white">
+        <div class="container-lg">
+            <h2 class="section-title animate-on-scroll fade-in-up">Calcola il <span class="text-primary">Tuo Potenziale</span> Guadagno</h2>
+            <p class="section-subtitle animate-on-scroll fade-in-up delay-100">
+                Usa il nostro strumento per ottenere una stima del rendimento lordo del tuo immobile. I dati sono basati su medie di mercato e possono variare.
+            </p>
+            <div class="max-w-3xl mx-auto custom-card hoverable-card animate-on-scroll fade-in-up delay-200">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label for="city-select" class="block text-sm font-medium text-gray-700">Città</label>
+                        <select id="city-select" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-dark focus:border-primary-dark sm:text-sm rounded-md">
+                            <option>Bologna</option>
+                            <option>Bolzano</option>
+                            <option>Cagliari</option>
+                            <option>Catania</option>
+                            <option>Cinque Terre</option>
+                            <option>Cortina d'Ampezzo</option>
+                            <option>Costiera Amalfitana</option>
+                            <option>Costa Smeralda</option>
+                            <option>Firenze</option>
+                            <option>Genova</option>
+                            <option>Lago di Como</option>
+                            <option>Lago di Garda</option>
+                            <option>Lecce</option>
+                            <option>Matera</option>
+                            <option>Milano</option>
+                            <option>Napoli</option>
+                            <option>Padova</option>
+                            <option>Palermo</option>
+                            <option>Pisa</option>
+                            <option>Rimini</option>
+                            <option>Roma</option>
+                            <option>Siena</option>
+                            <option>Taormina</option>
+                            <option>Torino</option>
+                            <option>Trento</option>
+                            <option>Treviso</option>
+                            <option>Trieste</option>
+                            <option>Udine</option>
+                            <option>Venezia</option>
+                            <option>Verona</option>
+                            <option>Vicenza</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="property-type-select" class="block text-sm font-medium text-gray-700">Tipo di Immobile</label>
+                        <select id="property-type-select" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-dark focus:border-primary-dark sm:text-sm rounded-md">
+                            <option value="monolocale">Monolocale</option>
+                            <option value="bilocale">Bilocale</option>
+                            <option value="trilocale">Trilocale</option>
+                            <option value="quadrilocale">Quadrilocale</option>
+                            <option value="attico">Attico</option>
+                            <option value="villa">Villa</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="guest-count-input" class="block text-sm font-medium text-gray-700">Numero Posti Letto</label>
+                        <input type="number" id="guest-count-input" value="2" min="1" max="10" class="mt-1 focus:ring-primary-dark focus:border-primary-dark block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                    </div>
+                </div>
+                <div class="text-center mt-6">
+                    <button id="calculate-roi-btn" class="btn btn-primary">Calcola Rendimento</button>
+                </div>
+            </div>
+            <div id="roi-loader" class="text-center mt-6 hidden">
+                <div class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] text-primary" role="status">
+                    <span class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Caricamento...</span>
+                </div>
+            </div>
+            <div id="roi-result" class="max-w-3xl mx-auto mt-6 p-6 bg-primary/10 border border-primary-dark rounded-lg hidden animate-on-scroll fade-in-up">
+                <!-- I risultati verranno inseriti qui dal JavaScript -->
+            </div>
+             <p id="disclaimer" class="text-center text-xs text-gray-400 mt-4 hidden">
+                *Questa è una stima basata su dati di mercato medi e non costituisce una garanzia di rendimento. Il guadagno effettivo può variare in base a stagionalità, eventi e caratteristiche specifiche dell'immobile.
+            </p>
+        </div>
+    </section>
+
+
+    <section id="offerta" class="bg-gray-100">
+        <div class="container-lg">
+            <h2 class="section-title animate-on-scroll fade-in-up">La Nostra Offerta <span class="text-primary">Trasparente</span></h2>
+            <p class="section-subtitle animate-on-scroll fade-in-up delay-100">
+                Una struttura di commissioni chiara per il nostro servizio di Gestione Premium, pensata per la tua massima redditività.
+            </p>
+            <div class="max-w-2xl mx-auto">
+                <div class="custom-card hoverable-card offer-card offer-card-standard animate-on-scroll fade-in-up delay-200">
+                    <h3 class="font-bold text-center">Gestione Premium Standard</h3>
+                    <p class="price text-center">27.5%</p>
+                    <p class="price-note text-center">Commissione sul lordo incassato (al netto commissioni OTA)</p>
+                    <p class="text-gray-700 mb-6 text-center">Questa formula include il nostro servizio completo, pensato per massimizzare i tuoi rendimenti senza alcuno stress da parte tua.</p>
+                    
+                    <div class="pt-4">
+                        <h4 class="includes-title text-center">Cosa include la Gestione Premium:</h4>
+                        <ul class="text-sm mb-6 grid grid-cols-1 sm:grid-cols-2 gap-x-4">
+                            <li>Pacchetto Attivazione completo (valore €840+)</li>
+                            <li>Gestione operativa 24/7</li>
+                            <li>Ottimizzazione continua dei ricavi</li>
+                            <li>Gestione pulizie e manutenzioni</li>
+                            <li>Assistenza burocratica e fiscale base</li>
+                            <li>Reportistica dettagliata e trasparente</li>
+                            <li>Comunicazione e assistenza ospiti</li>
+                            <li>Marketing e gestione annunci OTA</li>
+                        </ul>
+                        <div class="taxation-info">
+                            <h4 class="font-semibold text-lg mb-2 text-center">Tassazione Semplificata:</h4>
+                            <ul class="text-sm text-center">
+                                <li>Ricevi i proventi netti di Cedolare Secca (21%) direttamente dalle piattaforme OTA (ove applicabile).</li>
+                                <li>La tua dichiarazione dei redditi è più semplice.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contatti" class="dark-section">
+        <div class="container-lg">
+            <h2 class="section-title animate-on-scroll fade-in-up">Pronto a Valorizzare il Tuo <span class="text-primary">Immobile?</span></h2>
+            <p class="section-subtitle animate-on-scroll fade-in-up delay-100">
+                Analizzeremo gratuitamente il potenziale del tuo immobile e ti mostreremo come MoorentPm fa la differenza.
+            </p>
+            <div class="text-center mt-12 animate-on-scroll fade-in-up delay-200">
+                <a href="https://wa.me/393534830386" target="_blank" class="btn btn-primary text-lg">
+                    <i class="fab fa-whatsapp"></i> Richiedi una Consulenza Gratuita
+                </a>
+            </div>
+
+            <div class="footer-text text-center animate-on-scroll fade-in-up delay-400">
+                <p>MoorentPm - Trasformiamo immobili in investimenti premium.</p>
+                <div class="mt-6 text-sm text-gray-500">
+                     © 2024 MoorentPm. Tutti i diritti riservati. [P.IVA Placeholder]
+                 </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Funzione Helper per debounce
+        function debounce(func, wait, immediate) {
+            let timeout;
+            return function executedFunction() {
+                const context = this; const args = arguments;
+                const later = function() { timeout = null; if (!immediate) func.apply(context, args); };
+                const callNow = immediate && !timeout; clearTimeout(timeout); timeout = setTimeout(later, wait);
+                if (callNow) func.apply(context, args);
+            };
+         }
+        // Verifica Disponibilità Chart.js
+        function isChartAvailable() { return typeof Chart !== 'undefined'; }
+
+        // --- Funzioni Inizializzazione Grafici ---
+        function initServicesChart() {
+             if (!isChartAvailable() || document.getElementById('servicesChart')?.chartInstance) return;
+             const ctx = document.getElementById('servicesChart')?.getContext('2d'); if (!ctx) return;
+             console.log("Inizializzazione Grafico Servizi...");
+             const chart = new Chart(ctx, { type: 'bar', data: { labels: ['Gestione Completa', 'Ottimizzazione Ricavi', 'Marketing & Visibilità', 'Manutenzione & Qualità', 'Supporto Burocratico', 'Assistenza Ospiti'], datasets: [{ label: 'Livello Servizio MoorentPm', data: [95, 95, 85, 90, 90, 95], backgroundColor: 'rgba(243, 223, 217, 0.7)', borderColor: 'var(--primary-dark)', borderWidth: 1 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, scales: { x: { beginAtZero: true, max: 100, grid: { display: false } }, y: { grid: { display: false } } }, plugins: { legend: { display: false }, title: { display: true, text: 'Aree di Eccellenza del Servizio' } }, animation: { duration: 1500, easing: 'easeOutQuart' } } });
+             document.getElementById('servicesChart').chartInstance = chart;
+        }
+        function initPackageChart() {
+             if (!isChartAvailable() || document.getElementById('packageChart')?.chartInstance) return;
+             const ctx = document.getElementById('packageChart')?.getContext('2d'); if (!ctx) return;
+             console.log("Inizializzazione Grafico Pacchetto...");
+             const packageData = { labels: [ 'Staging (€250)', 'Foto (€150)', 'Fiscale (€100)', 'Assic. (€100)', 'Check-in (€100)', 'Set Base (€70)', 'Welcome (€50)', 'Pratiche (€20)' ], values: [ 250, 150, 100, 100, 100, 70, 50, 20 ] };
+             const backgroundColors = [ '#f3dfd9', '#aca5a5', '#232323', '#f8d0c3', '#b58577', '#8f8a8a', '#e0b9ae', '#6b6666' ];
+             let currentChartType = 'doughnut'; let packageChart = null;
+             function createPackageChartConfig(type) { const isDoughnut = type === 'doughnut'; return { type: type, data: { labels: packageData.labels, datasets: [{ data: packageData.values, backgroundColor: backgroundColors, borderColor: isDoughnut ? '#ffffff' : null, borderWidth: isDoughnut ? 3 : 0 }] }, options: { indexAxis: isDoughnut ? 'x' : 'y', responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Valore Componenti Pacchetto (€840)', font: { size: 14 } }, legend: { display: isDoughnut, position: 'bottom', labels: { padding: 15, font: { size: 10 } } }, tooltip: { callbacks: { label: function(context) { let label = context.label || ''; if (label) { label = label.split('(')[0].trim() + ': '; } label += `€${context.parsed.y || context.parsed}`; return label; } } } }, scales: { x: { display: !isDoughnut, beginAtZero: true, grid: { display: false }, title: { display: true, text: 'Valore (€)', font: { size: 10 } } }, y: { display: !isDoughnut, grid: { display: false }, ticks: { font: { size: 10 } } } }, animation: { duration: 1200, easing: 'easeOutCubic' } } }; }
+             packageChart = new Chart(ctx, createPackageChartConfig(currentChartType));
+             document.getElementById('packageChart').chartInstance = packageChart;
+             const toggleBtn = document.getElementById('toggleChartViewBtn');
+             if (toggleBtn && !toggleBtn.dataset.listenerAttached) { toggleBtn.addEventListener('click', () => { if (!packageChart) return; currentChartType = packageChart.config.type === 'doughnut' ? 'bar' : 'doughnut'; packageChart.destroy(); packageChart = new Chart(ctx, createPackageChartConfig(currentChartType)); document.getElementById('packageChart').chartInstance = packageChart; }); toggleBtn.dataset.listenerAttached = 'true'; }
+        }
+        function initFinancialChart() { /* Non usato in questa versione */ }
+        function initFinancialChartPadova() {
+            if (!isChartAvailable() || document.getElementById('financialChartPadova')?.chartInstance) return;
+            const ctx = document.getElementById('financialChartPadova')?.getContext('2d');
+            if (!ctx) { console.error("Canvas per Grafico Padova non trovato"); return; }
+            console.log("Inizializzazione Grafico Padova...");
+
+            const padovaData = {
+                labels: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'],
+                guadagni: [600, 700, 1000, 1500, 1800, 2200, 2300, 2500, 1700, 1200, 300, 500]
+            };
+            const financialChartPadova = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: padovaData.labels,
+                    datasets: [{
+                        label: 'Guadagni Possibili (€)',
+                        data: padovaData.guadagni,
+                        borderColor: 'var(--primary)',
+                        backgroundColor: 'rgba(243, 223, 217, 0.4)',
+                        borderWidth: 3, fill: true, tension: 0.4,
+                        pointBackgroundColor: 'var(--primary-dark)', pointBorderColor: 'var(--white)',
+                        pointHoverBackgroundColor: 'var(--white)', pointHoverBorderColor: 'var(--primary-dark)',
+                        pointRadius: 5, pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: false, title: { display: true, text: 'Guadagni Possibili (€)' }, grid: { color: 'rgba(0,0,0,0.08)'}, ticks: { stepSize: 500 } },
+                        x: { grid: { display: false } }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { mode: 'index', intersect: false, callbacks: { label: function(context) { return `Guadagno: €${context.parsed.y}`; } } }
+                    },
+                    interaction: { mode: 'nearest', axis: 'x', intersect: false },
+                    animation: { duration: 1500, easing: 'easeOutExpo' }
+                }
+            });
+            document.getElementById('financialChartPadova').chartInstance = financialChartPadova;
+        }
+
+
+        // --- Inizializzazione Globale ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const mainNav = document.getElementById('main-nav');
+            const scrollProgressBar = document.getElementById('scroll-progress-bar');
+            const navHeight = mainNav ? mainNav.offsetHeight : 60;
+            document.documentElement.style.setProperty('--nav-height', `${navHeight}px`);
+            let lastScrollTop = 0;
+
+            const handleScroll = debounce(() => {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                 if (mainNav) { if (scrollTop > lastScrollTop && scrollTop > navHeight * 1.5) { mainNav.classList.remove('nav-scrolled'); } else if (scrollTop < lastScrollTop || scrollTop <= navHeight) { if (scrollTop > navHeight * 0.5) { mainNav.classList.add('nav-scrolled'); } else { mainNav.classList.remove('nav-scrolled'); } } lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; }
+                 if (scrollProgressBar) { const scrollPercent = (document.documentElement.scrollHeight - window.innerHeight) > 0 ? (scrollTop / (document.documentElement.scrollHeight - window.innerHeight)) * 100 : 0; scrollProgressBar.style.width = `${scrollPercent}%`; }
+            }, 10);
+            window.addEventListener('scroll', handleScroll, { passive: true }); handleScroll();
+
+            const animatedElements = document.querySelectorAll('.animate-on-scroll');
+            const observerOptions = { threshold: 0.1 };
+            const observer = new IntersectionObserver((entries, observerInstance) => {
+                entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observerInstance.unobserve(entry.target); } });
+            }, observerOptions);
+            animatedElements.forEach(el => observer.observe(el));
+
+            const chartObserverOptions = { threshold: 0.4 };
+            const chartObserver = new IntersectionObserver((entries, observerInstance) => {
+                 entries.forEach(entry => { if (entry.isIntersecting) { const canvas = entry.target; if (!canvas.chartInstance) { const canvasId = canvas.id; if (canvasId === 'servicesChart') initServicesChart(); else if (canvasId === 'packageChart') initPackageChart(); else if (canvasId === 'financialChartPadova') initFinancialChartPadova(); } observerInstance.unobserve(canvas); } });
+            }, chartObserverOptions);
+            document.querySelectorAll('canvas[id$="Chart"], canvas[id$="ChartPadova"]').forEach(canvas => chartObserver.observe(canvas));
+
+            const navLinks = document.querySelectorAll('#main-nav nav a');
+            const sections = document.querySelectorAll('section[id]');
+            const updateActiveNavLink = debounce(() => {
+                 let currentSectionId = ''; const referencePoint = window.pageYOffset + navHeight + (window.innerHeight * 0.4);
+                 sections.forEach(section => { const sectionTop = section.offsetTop; if (referencePoint >= sectionTop) { currentSectionId = section.getAttribute('id'); } });
+                 if (window.pageYOffset < sections[0]?.offsetTop - navHeight * 2) { currentSectionId = 'hero'; }
+                 navLinks.forEach(link => { link.classList.toggle('active', link.getAttribute('href') === `#${currentSectionId}`); });
+            }, 100);
+            window.addEventListener('scroll', updateActiveNavLink, { passive: true }); updateActiveNavLink();
+
+            // --- Logica Menu Mobile ---
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const closeMobileMenuButton = document.getElementById('close-mobile-menu');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileNavLinks = document.querySelectorAll('.nav-link-mobile');
+
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.remove('translate-x-full');
+                    document.body.classList.add('mobile-menu-open');
+                });
+            }
+
+            if (closeMobileMenuButton && mobileMenu) {
+                closeMobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.add('translate-x-full');
+                    document.body.classList.remove('mobile-menu-open');
+                });
+            }
+
+            mobileNavLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('translate-x-full');
+                    document.body.classList.remove('mobile-menu-open');
+                });
+            });
+
+            const serviceTabButtons = document.querySelectorAll('.service-tab-button');
+            const serviceTabContents = document.querySelectorAll('.service-content');
+            serviceTabButtons.forEach(button => {
+                  button.addEventListener('click', () => {
+                      const targetId = button.dataset.target;
+                      // Rimuove la classe 'active' da tutti i bottoni
+                      serviceTabButtons.forEach(btn => btn.classList.remove('active'));
+                      // Aggiunge la classe 'active' solo al bottone cliccato
+                      button.classList.add('active');
+                      
+                      serviceTabContents.forEach(content => {
+                          content.classList.toggle('active', content.id === targetId);
+                      });
+                  });
+             });
+
+            // --- Logica Calcolatore di Rendimento ---
+            const calculateBtn = document.getElementById('calculate-roi-btn');
+            const roiLoader = document.getElementById('roi-loader');
+            const roiResultDiv = document.getElementById('roi-result');
+            const disclaimer = document.getElementById('disclaimer');
+
+            // Modello dati più dettagliato e verosimile
+            const marketData = {
+                'Milano':    { basePrice: 150, occupancy: 0.78, typeMultiplier: { monolocale: 0.8, bilocale: 1, trilocale: 1.4, quadrilocale: 1.8, attico: 2.2, villa: 2.5 } },
+                'Roma':      { basePrice: 130, occupancy: 0.82, typeMultiplier: { monolocale: 0.8, bilocale: 1, trilocale: 1.3, quadrilocale: 1.7, attico: 2.1, villa: 2.2 } },
+                'Firenze':   { basePrice: 140, occupancy: 0.85, typeMultiplier: { monolocale: 0.7, bilocale: 1, trilocale: 1.5, quadrilocale: 1.9, attico: 2.4, villa: 2.8 } },
+                'Napoli':    { basePrice: 90,  occupancy: 0.75, typeMultiplier: { monolocale: 0.9, bilocale: 1, trilocale: 1.2, quadrilocale: 1.5, attico: 1.8, villa: 2.0 } },
+                'Venezia':   { basePrice: 180, occupancy: 0.88, typeMultiplier: { monolocale: 0.8, bilocale: 1, trilocale: 1.6, quadrilocale: 2.0, attico: 2.8, villa: 3.0 } },
+                'Bologna':   { basePrice: 100, occupancy: 0.72, typeMultiplier: { monolocale: 0.85, bilocale: 1, trilocale: 1.3, quadrilocale: 1.6, attico: 2.0, villa: 2.3 } },
+                'Torino':    { basePrice: 95,  occupancy: 0.68, typeMultiplier: { monolocale: 0.9, bilocale: 1, trilocale: 1.25, quadrilocale: 1.5, attico: 1.9, villa: 2.1 } },
+                'Palermo':   { basePrice: 85,  occupancy: 0.70, typeMultiplier: { monolocale: 0.9, bilocale: 1, trilocale: 1.2, quadrilocale: 1.4, attico: 1.7, villa: 1.9 } },
+                'Verona':    { basePrice: 115, occupancy: 0.76, typeMultiplier: { monolocale: 0.8, bilocale: 1, trilocale: 1.35, quadrilocale: 1.7, attico: 2.1, villa: 2.4 } },
+                'Costiera Amalfitana': { basePrice: 250, occupancy: 0.80, typeMultiplier: { monolocale: 0.7, bilocale: 1, trilocale: 1.8, quadrilocale: 2.5, attico: 3.5, villa: 4.0 } },
+                'Cinque Terre': { basePrice: 180, occupancy: 0.85, typeMultiplier: { monolocale: 0.75, bilocale: 1, trilocale: 1.6, quadrilocale: 2.2, attico: 2.9, villa: 3.2 } },
+                'Lago di Como': { basePrice: 200, occupancy: 0.78, typeMultiplier: { monolocale: 0.7, bilocale: 1, trilocale: 1.7, quadrilocale: 2.4, attico: 3.0, villa: 3.5 } },
+                'Siena':     { basePrice: 130, occupancy: 0.80, typeMultiplier: { monolocale: 0.75, bilocale: 1, trilocale: 1.4, quadrilocale: 1.8, attico: 2.2, villa: 2.5 } },
+                'Pisa':      { basePrice: 100, occupancy: 0.75, typeMultiplier: { monolocale: 0.8, bilocale: 1, trilocale: 1.3, quadrilocale: 1.6, attico: 1.9, villa: 2.1 } },
+                'Catania':   { basePrice: 80, occupancy: 0.68, typeMultiplier: { monolocale: 0.9, bilocale: 1, trilocale: 1.2, quadrilocale: 1.4, attico: 1.6, villa: 1.8 } },
+                'Taormina':  { basePrice: 190, occupancy: 0.82, typeMultiplier: { monolocale: 0.7, bilocale: 1, trilocale: 1.7, quadrilocale: 2.3, attico: 3.0, villa: 3.4 } },
+                'Lecce':     { basePrice: 95, occupancy: 0.72, typeMultiplier: { monolocale: 0.85, bilocale: 1, trilocale: 1.25, quadrilocale: 1.5, attico: 1.8, villa: 2.0 } },
+                'Matera':    { basePrice: 120, occupancy: 0.80, typeMultiplier: { monolocale: 0.8, bilocale: 1, trilocale: 1.4, quadrilocale: 1.7, attico: 2.0, villa: 2.3 } },
+                'Genova':    { basePrice: 105, occupancy: 0.70, typeMultiplier: { monolocale: 0.85, bilocale: 1, trilocale: 1.3, quadrilocale: 1.6, attico: 1.9, villa: 2.2 } },
+                'Cagliari':  { basePrice: 90, occupancy: 0.70, typeMultiplier: { monolocale: 0.9, bilocale: 1, trilocale: 1.2, quadrilocale: 1.4, attico: 1.7, villa: 1.9 } },
+                'Costa Smeralda': { basePrice: 300, occupancy: 0.75, typeMultiplier: { monolocale: 0.6, bilocale: 1, trilocale: 2.0, quadrilocale: 3.0, attico: 4.0, villa: 5.0 } },
+                'Rimini':    { basePrice: 90, occupancy: 0.65, typeMultiplier: { monolocale: 0.9, bilocale: 1, trilocale: 1.1, quadrilocale: 1.3, attico: 1.5, villa: 1.8 } },
+                'Padova':    { basePrice: 100, occupancy: 0.74, typeMultiplier: { monolocale: 0.8, bilocale: 1, trilocale: 1.3, quadrilocale: 1.6, attico: 1.9, villa: 2.2 } },
+                'Treviso':   { basePrice: 95,  occupancy: 0.70, typeMultiplier: { monolocale: 0.85, bilocale: 1, trilocale: 1.25, quadrilocale: 1.5, attico: 1.8, villa: 2.0 } },
+                'Vicenza':   { basePrice: 90,  occupancy: 0.65, typeMultiplier: { monolocale: 0.9, bilocale: 1, trilocale: 1.2, quadrilocale: 1.4, attico: 1.7, villa: 1.9 } },
+                'Cortina d\'Ampezzo': { basePrice: 280, occupancy: 0.70, typeMultiplier: { monolocale: 0.7, bilocale: 1, trilocale: 1.9, quadrilocale: 2.8, attico: 3.8, villa: 4.5 } },
+                'Lago di Garda': { basePrice: 160, occupancy: 0.78, typeMultiplier: { monolocale: 0.7, bilocale: 1, trilocale: 1.6, quadrilocale: 2.2, attico: 2.8, villa: 3.3 } },
+                'Trento':    { basePrice: 90,  occupancy: 0.68, typeMultiplier: { monolocale: 0.85, bilocale: 1, trilocale: 1.2, quadrilocale: 1.4, attico: 1.7, villa: 1.9 } },
+                'Bolzano':   { basePrice: 110, occupancy: 0.72, typeMultiplier: { monolocale: 0.8, bilocale: 1, trilocale: 1.3, quadrilocale: 1.6, attico: 1.9, villa: 2.2 } },
+                'Trieste':   { basePrice: 95,  occupancy: 0.67, typeMultiplier: { monolocale: 0.85, bilocale: 1, trilocale: 1.2, quadrilocale: 1.5, attico: 1.8, villa: 2.0 } },
+                'Udine':     { basePrice: 85,  occupancy: 0.60, typeMultiplier: { monolocale: 0.9, bilocale: 1, trilocale: 1.15, quadrilocale: 1.3, attico: 1.6, villa: 1.8 } }
+            };
+
+            calculateBtn.addEventListener('click', () => {
+                // Mostra il loader e nasconde i risultati precedenti
+                roiLoader.classList.remove('hidden');
+                roiResultDiv.classList.add('hidden');
+                disclaimer.classList.add('hidden');
+                calculateBtn.disabled = true;
+
+                // Simula un piccolo ritardo per dare l'idea di un calcolo complesso
+                setTimeout(() => {
+                    const city = document.getElementById('city-select').value;
+                    const propertyType = document.getElementById('property-type-select').value;
+                    const guestCount = parseInt(document.getElementById('guest-count-input').value, 10);
+
+                    const data = marketData[city];
+                    const typeMultiplier = data.typeMultiplier[propertyType] || 1;
+                    const guestMultiplier = 1 + ((guestCount - 2) * 0.1); // +10% per ogni ospite oltre i 2
+
+                    const avgNightlyRate = data.basePrice * typeMultiplier * guestMultiplier;
+                    const monthlyGrossRevenue = avgNightlyRate * data.occupancy * 30;
+                    
+                    const moorentPmCommission = monthlyGrossRevenue * 0.275;
+                    const monthlyNetRevenue = monthlyGrossRevenue - moorentPmCommission;
+
+                    // Formattazione in valuta
+                    const formatCurrency = (value) => new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(value);
+
+                    // Mostra i risultati
+                    roiResultDiv.innerHTML = `
+                        <h3 class="text-xl font-bold text-center text-accent mb-4">Stima del Rendimento</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
+                            <div>
+                                <p class="text-sm text-gray-500">Prezzo Medio a Notte</p>
+                                <p class="text-2xl font-bold text-primary">${formatCurrency(avgNightlyRate)}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Tasso di Occupazione Stimato</p>
+                                <p class="text-2xl font-bold text-primary">${(data.occupancy * 100).toFixed(0)}%</p>
+                            </div>
+                        </div>
+                        <div class="mt-6 text-center">
+                            <p class="text-md text-gray-600">Guadagno Lordo Mensile Stimato:</p>
+                            <p class="text-4xl font-extrabold text-accent my-2">${formatCurrency(monthlyGrossRevenue)}</p>
+                            <p class="text-sm text-gray-500">Al lordo della nostra commissione e della cedolare secca.</p>
+                        </div>
+                        <div class="mt-6 text-center bg-white p-4 rounded-lg">
+                             <p class="text-md font-semibold text-success">Guadagno Netto Stimato con MoorentPm:</p>
+                            <p class="text-3xl font-bold text-success my-2">${formatCurrency(monthlyNetRevenue)}</p>
+                             <p class="text-xs text-gray-500">(Dopo la nostra commissione, al lordo della cedolare secca)</p>
+                        </div>
+                    `;
+                    
+                    roiLoader.classList.add('hidden');
+                    roiResultDiv.classList.remove('hidden');
+                    disclaimer.classList.remove('hidden');
+                    calculateBtn.disabled = false;
+
+                }, 1000); // Ritardo di 1 secondo
+            });
+        });
+    </script>
+
+</body>
+</html>
