@@ -253,7 +253,7 @@
     </header>
 
     <!-- Mobile Menu Overlay -->
-    <div id="mobile-menu" class="fixed inset-0 bg-accent/95 backdrop-blur-sm z-[9999] transform translate-x-full transition-transform duration-300 ease-in-out md:hidden">
+    <div id="mobile-menu" class="fixed inset-0 bg-accent z-[9999] transform translate-x-full transition-transform duration-300 ease-in-out md:hidden">
         <div class="flex justify-end p-6">
             <button id="close-mobile-menu" class="text-3xl text-white" aria-label="Chiudi menu">
                 &times;
@@ -789,12 +789,11 @@
 
             // Scroll handler per nascondere/mostrare la navbar
             const handleScroll = () => {
+                if (document.body.classList.contains('mobile-menu-open')) return;
                 const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
                 if (scrollTop > lastScrollTop && scrollTop > navHeight) {
-                    // Scroll down
                     mainNav.classList.add('nav-hidden');
                 } else {
-                    // Scroll up
                     mainNav.classList.remove('nav-hidden');
                 }
                 lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
