@@ -55,8 +55,25 @@
         .dark-section .hoverable-card:hover { box-shadow: 0 25px 50px rgba(255, 255, 255, 0.08); }
 
         /* --- Barra Navigazione --- */
-        #main-nav { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; background-color: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); padding: 0 1rem; height: var(--nav-height); transition: transform 0.3s ease-in-out, background-color 0.3s ease; border-bottom: 1px solid rgba(0, 0, 0, 0.05); }
-        #main-nav.nav-up { transform: translateY(-100%); }
+        #main-nav { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            z-index: 1000; 
+            background-color: rgba(255, 255, 255, 0.8); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px); 
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); 
+            padding: 0 1rem; 
+            height: var(--nav-height); 
+            transition: transform 0.3s ease-in-out; 
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05); 
+            transform: translateY(0);
+        }
+        #main-nav.nav-hidden { 
+            transform: translateY(-100%); 
+        }
         #main-nav .nav-container { display: flex; justify-content: space-between; align-items: center; width: 100%; height: 100%; }
         #main-nav .logo { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--accent); transition: color 0.3s; }
         #main-nav .logo:hover { color: var(--primary-dark); }
@@ -248,26 +265,26 @@
                  <a href="#contatti" class="btn btn-primary btn-sm py-2 px-4">Contattaci</a>
             </div>
         </div>
-    
-        <!-- Mobile Menu Overlay -->
-        <div id="mobile-menu" class="fixed inset-0 bg-accent z-50 transform translate-x-full transition-transform duration-300 ease-in-out md:hidden">
-            <div class="flex justify-end p-6">
-                <button id="close-mobile-menu" class="text-3xl text-white" aria-label="Chiudi menu">
-                    &times;
-                </button>
-            </div>
-            <nav class="flex flex-col items-center justify-center h-full -mt-16 space-y-8">
-                <a href="#problema" class="nav-link-mobile text-2xl text-white font-medium">Il Problema</a>
-                <a href="#valori-pilastri" class="nav-link-mobile text-2xl text-white font-medium">Valori</a>
-                <a href="#come-funziona" class="nav-link-mobile text-2xl text-white font-medium">Servizi</a>
-                <a href="#perche-noi" class="nav-link-mobile text-2xl text-white font-medium">Perché Noi</a>
-                <a href="#risultati" class="nav-link-mobile text-2xl text-white font-medium">Risultati</a>
-                <a href="#immobile-ideale" class="nav-link-mobile text-2xl text-white font-medium">Immobile Ideale</a>
-                <a href="#offerta" class="nav-link-mobile text-2xl text-white font-medium">Offerta</a>
-                <a href="#contatti" class="nav-link-mobile text-2xl text-white font-medium">Contatti</a>
-            </nav>
-        </div>
     </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 bg-accent/95 backdrop-blur-sm z-[9999] transform translate-x-full transition-transform duration-300 ease-in-out md:hidden">
+        <div class="flex justify-end p-6">
+            <button id="close-mobile-menu" class="text-3xl text-white" aria-label="Chiudi menu">
+                &times;
+            </button>
+        </div>
+        <nav class="flex flex-col items-center justify-center h-full -mt-16 space-y-8">
+            <a href="#problema" class="nav-link-mobile text-2xl text-white font-medium">Il Problema</a>
+            <a href="#valori-pilastri" class="nav-link-mobile text-2xl text-white font-medium">Valori</a>
+            <a href="#come-funziona" class="nav-link-mobile text-2xl text-white font-medium">Servizi</a>
+            <a href="#perche-noi" class="nav-link-mobile text-2xl text-white font-medium">Perché Noi</a>
+            <a href="#risultati" class="nav-link-mobile text-2xl text-white font-medium">Risultati</a>
+            <a href="#immobile-ideale" class="nav-link-mobile text-2xl text-white font-medium">Immobile Ideale</a>
+            <a href="#offerta" class="nav-link-mobile text-2xl text-white font-medium">Offerta</a>
+            <a href="#contatti" class="nav-link-mobile text-2xl text-white font-medium">Contatti</a>
+        </nav>
+    </div>
 
     <section id="hero" class="relative">
         <div class="container-lg z-10">
@@ -790,10 +807,10 @@
                 const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
                 if (scrollTop > lastScrollTop && scrollTop > navHeight) {
                     // Scroll down
-                    mainNav.classList.add('nav-up');
+                    mainNav.classList.add('nav-hidden');
                 } else {
                     // Scroll up
-                    mainNav.classList.remove('nav-up');
+                    mainNav.classList.remove('nav-hidden');
                 }
                 lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
 
