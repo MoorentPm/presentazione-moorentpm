@@ -41,14 +41,14 @@ function initFinancialChartPadova() {
 
     const padovaData = {
         labels: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'],
-        guadagni: [600, 700, 1000, 1500, 1800, 2200, 2300, 2500, 1700, 1200, 300, 500]
+        guadagni: [1966.76, 2158.66, 2194.83, 3405.00, 2576.00, 3225.09, 2945.48, 2629.25, 3615.44, 4472.46, 2140.75, 2624.04]
     };
     const financialChartPadova = new Chart(ctx, {
         type: 'line',
         data: {
             labels: padovaData.labels,
             datasets: [{
-                label: 'Guadagni Possibili (€)',
+                label: 'Ricavi Reali (€)',
                 data: padovaData.guadagni,
                 borderColor: 'var(--primary)',
                 backgroundColor: 'rgba(243, 223, 217, 0.4)',
@@ -61,12 +61,12 @@ function initFinancialChartPadova() {
         options: {
             responsive: true, maintainAspectRatio: false,
             scales: {
-                y: { beginAtZero: false, title: { display: true, text: 'Guadagni Possibili (€)' }, grid: { color: 'rgba(0,0,0,0.08)'}, ticks: { stepSize: 500 } },
+                y: { beginAtZero: false, title: { display: true, text: 'Ricavi Reali (€)' }, grid: { color: 'rgba(0,0,0,0.08)'}, ticks: { stepSize: 500, callback: function(value) { return '€' + value.toLocaleString('it-IT'); } } },
                 x: { grid: { display: false } }
             },
             plugins: {
                 legend: { display: false },
-                tooltip: { mode: 'index', intersect: false, callbacks: { label: function(context) { return `Guadagno: €${context.parsed.y}`; } } }
+                tooltip: { mode: 'index', intersect: false, callbacks: { label: function(context) { return `Ricavi: €${context.parsed.y.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`; } } }
             },
             interaction: { mode: 'nearest', axis: 'x', intersect: false },
             animation: { duration: 1500, easing: 'easeOutExpo' }
